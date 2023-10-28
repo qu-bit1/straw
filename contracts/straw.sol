@@ -19,7 +19,7 @@ contract Straw{
 
     struct allUsers{
         string name;
-        address accountAddress
+        address accountAddress;
     }
 
     allUsers[] getAllUsers;
