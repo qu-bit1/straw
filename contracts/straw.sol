@@ -36,10 +36,7 @@ contract Straw{
 
     //Check if user exists
     function checkUserExists(address pubkey) public view returns(bool){
-        if(userList[pubkey].name.length == 0){
-            return false;
-        }
-        return true;
+        return bytes(userList[pubkey].name).length > 0;
     }
 
     // Create Account
@@ -64,7 +61,7 @@ contract Straw{
         require(checkUserExists(msg.sender), "User does not exist, Create an account first");
         require(checkUserExists(friend_key), "Lol your friend does not exist");
         require(msg.sender != friend_key, "You cannot add yourself as a friend");
-        require checkAlreadyFriend(msg.sender, friend_key)==false, "You are already friends";
+        require (checkAlreadyFriend(msg.sender, friend_key)==false, "You are already friends");
         _addFriend(msg.sender, friend_key, name);
         _addFriend(friend_key, msg.sender, userList[msg.sender].name);
     }
@@ -87,19 +84,19 @@ contract Straw{
 
     function _addFriend(address me, address friend_key, string memory name) internal{
         friend memory newFriend = friend(friend_key, name);
-        userlist[me].friendList.push(newFriend);
+        userList[me].friendList.push(newFriend);
     }
 
-    function getMyFriendList() external view return(friend[] memory){
+    function getMyFriendList() external view returns(friend[] memory){
         require(checkUserExists(msg.sender), "User does not exist, Create an account first");
         return userList[msg.sender].friendList;
     }
 
     function _getChatCode(address pubkey1, address pubkey2) internal pure returns(bytes32){
         if(pubkey1 < pubkey2){
-            return keccak256(abi.encodePacked(pubkey1, pubkey2););
+            return keccak256(abi.encodePacked(pubkey1, pubkey2));
         }
-        else return keccak256(abi.encodePacked(pubkey2, pubkey1);); 
+        else return keccak256(abi.encodePacked(pubkey2, pubkey1)); 
     }
 
     function sendMessage(address friend_key, string calldata _msg) external{
